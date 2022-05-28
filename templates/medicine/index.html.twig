@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Medicine index{% endblock %}
+
+{% block body %}
+    <h1>Medicine index</h1>
+
+    <div class="container">
+        <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light">
+            <div class="row">
+                {% for medicine in medicines %}
+                        <div class="col-md-5 p-lg-2 mx-auto">
+                            <a href="{{ path('app_medicine_show', {'id': medicine.id}) }}">
+                                <div>{{medicine.name}}</div>
+                                <div>{{medicine.price}}₽</div>
+                            </a>
+                            {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                                {{ include('medicine/_add_to_cart.html.twig') }}
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('app_medicine_edit', {'id': medicine.id}) }}" class="link-secondary">edit</a>
+                            {% endif %}
+                        </div>
+                {% else %}
+                    <p colspan="5">no records found, please, come back later</p>
+                {% endfor %}
+            </div> 
+        </div>
+        {% if maxPages > 1 %}
+        <ul class="pagination pagination-sm">
+            {# `«` arrow  #}
+            <li {{ thisPage == 1 ? 'class="disabled"' }}>
+                <a href="{{ path('app_pages_index', {page: thisPage-1 < 1 ? 1 : thisPage-1}) }}" class="text-center p-3 mx-auto link-secondary">«</a>
+            </li>
+
+            {# Render each page number #}
+            {% for i in 1..maxPages %}
+            <li {{ thisPage == i ? 'class="active"' }}>
+                <a href="{{ path('app_pages_index', {page: i}) }}" class="text-center p-3 mx-auto link-secondary">{{ i }}</a>
+            </li>
+            {% endfor %}
+
+            {# `»` arrow #}
+            <li {{ thisPage == maxPages ? 'class="disabled"' }}>
+                <a href="{{ path('app_pages_index', {page: thisPage+1 <= maxPages ? thisPage+1 : thisPage}) }}" class="text-center p-3 mx-auto link-secondary">»</a>
+            </li>
+        </ul>
+        {% endif %}
+    </div>  
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_medicine_new') }}">Create new</a>
+    {% endif %}
+{% endblock %}

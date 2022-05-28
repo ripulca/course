@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Provides index{% endblock %}
+
+{% block body %}
+    <h1>Provides index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Amount</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for provide in provides %}
+            <tr>
+                <td>{{ provide.id }}</td>
+                <td>{{ provide.amount }}</td>
+                <td>
+                    <a href="{{ path('app_provides_show', {'id': provide.id}) }}">show</a>
+                    <a href="{{ path('app_provides_edit', {'id': provide.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_provides_new') }}">Create new</a>
+    {% endif %}
+{% endblock %}

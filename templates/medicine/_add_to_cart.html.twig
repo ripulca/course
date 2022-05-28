@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('add_medicine_to_cart', {'id': medicine.id}) }}">
+    <input type="hidden" name="id" value="{{ medicine.id }}">
+    <button class="btn">Add</button>
+</form>

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Custom{% endblock %}
+
+{% block body %}
+    <h1>Create new Custom</h1>
+
+    {{ include('custom/_form.html.twig') }}
+
+    <a href="{{ path('app_custom_index') }}">back to list</a>
+{% endblock %}
