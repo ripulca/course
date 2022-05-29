@@ -26,12 +26,10 @@
                     {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
                         <li><a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none" href="{{ path('app_medicine_index') }}">Medicines</a></li>
                         <li><a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none" href="{{ path('app_cart') }}">Cart</a></li>
-                    {% endif %}
-                    {% if is_granted('ROLE_CUSTOMER') %}
                         <li><a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none" href="{{ path('app_custom_index') }}">My customs</a></li>
                     {% endif %}
                     {% if is_granted('ROLE_COURIER') %}
-                        <li><a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none" href="{{ path('app_courier_custom_index') }}">Customs to deliver</a></li>
+                        <li><a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none" href="{{ path('app_custom_index') }}">Customs to deliver</a></li>
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="{{ path('admin') }}" class="nav-link px-2 link-secondary h5">Административная панель</a></li>

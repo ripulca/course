@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Knp\Snappy\Pdf;
 use App\Entity\User;
 use App\Entity\Doctor;
 use App\Form\DoctorType;
@@ -11,13 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/doctor')]
 class DoctorController extends AbstractController
 {
-    #[Route('/', name: 'app_doctor_index', methods: ['GET'])]
-    public function index(Request $request, ManagerRegistry $doctrine, DoctorRepository $doctorRepository): Response
+    #[Route('/', name: 'app_doctor_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, ManagerRegistry $doctrine, DoctorRepository $doctorRepository, Pdf $knpSnappyPdf): Response
     {
         $entityManager = $doctrine->getManager();
         $session = $request->getSession();
@@ -26,6 +28,18 @@ class DoctorController extends AbstractController
             $session->start();
         }
         $user=$entityManager->getRepository(User::class)->findOneBy(['email'=>$email]);
+        
+        if(isset($_POST['makeReport'])){
+            $html =$this->renderView('doctor/index.html.twig', [
+                'user'=>$user,
+                'doctors' => $doctorRepository->findAll(),
+            ]);
+            $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+        }
         return $this->render('doctor/index.html.twig', [
             'user'=>$user,
             'doctors' => $doctorRepository->findAll(),

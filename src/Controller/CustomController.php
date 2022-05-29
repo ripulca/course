@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Knp\Snappy\Pdf;
 use App\Entity\User;
 use App\Entity\Custom;
 use App\Form\CustomType;
@@ -11,13 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/custom')]
 class CustomController extends AbstractController
 {
-    #[Route('/', name: 'app_custom_index', methods: ['GET'])]
-    public function index(Request $request, ManagerRegistry $doctrine, CustomRepository $customRepository): Response
+    #[Route('/', name: 'app_custom_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, ManagerRegistry $doctrine, CustomRepository $customRepository, Pdf $knpSnappyPdf): Response
     {
         $entityManager = $doctrine->getManager();
         $session = $request->getSession();
@@ -27,17 +29,45 @@ class CustomController extends AbstractController
             if (!$session->isStarted()) {
                 $session->start();
             }
-            $customs=$user->getCustoms();
+            $role=$user->getRoles();
+            $role=$role[0];
+            if($role=='ROLE_CUSTOMER'){
+                $customs=$user->getCustoms();
+            }
+            else if($role=='ROLE_DOCTOR'){
+                $customs=$user->getDoctor()->getCustoms();
+            }
+            else{
+                $customs=$user->getCustomsToDeliver();
+            }
         }
         else{
             $customs=$customRepository->findAll();
         }
         
+        if(isset($_POST['makeReport'])){
+            $html =$this->renderView('custom/index.html.twig', [
+                'user'=>$user,
+                'customs' => $customs,
+            ]);
+            $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+        }
+
         return $this->render('custom/index.html.twig', [
             'user'=>$user,
             'customs' => $customs,
         ]);
     }
+
+    // #[Route('/', name: 'app_custom_report', methods: ['POST'])]
+    // public function report(Request $request, Pdf $knpSnappyPdf): Response
+    // {
+        
+    // }
 
     #[Route('/new', name: 'app_custom_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CustomRepository $customRepository): Response

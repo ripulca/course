@@ -4,6 +4,10 @@
 
 {% block body %}
     <h1>Doctor index</h1>
+    <form method="post">
+        <input type="hidden" name="makeReport" value="true">
+        <button type="submit" name="submit">Get report</button>
+    </form>
 
     <table class="table">
         <thead>
