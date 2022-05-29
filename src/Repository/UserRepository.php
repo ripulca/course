@@ -42,19 +42,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function getAllCustomers(){
+    public function findByRole($role){
         return $this->createQueryBuilder('u')
-           ->andWhere('u.roles =["ROLE_CUSTOMER"]')
-           ->orderBy('u.id', 'ASC')
-           ->getQuery()
-           ->getResult()
-       ;
+            ->andWhere('JSON_GET_TEXT(u.roles, 0) = :role')
+            ->setParameter('role', $role)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getAllDoctors(){
+    public function findCourierWithCountCustoms($city, $role='ROLE_COURIER'){
         return $this->createQueryBuilder('u')
-           ->andWhere('u.roles =["ROLE_DOCTOR"]')
-           ->orderBy('u.id', 'ASC')
+           ->select('u.id')
+           ->addSelect('COUNT(c.courier) as count')
+           ->leftJoin('App\Entity\Custom', 'c', 'WITH', 'c.courier=u.id')
+           ->andWhere('JSON_GET_TEXT(u.roles, 0) = :role')
+           ->andWhere('u.city = :city')
+           ->groupBy('u.id')
+           ->orderBy('count', 'ASC')
+           ->setParameter('role', $role)
+           ->setParameter('city', $city)
            ->getQuery()
            ->getResult()
        ;

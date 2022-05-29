@@ -9,6 +9,8 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Provider</th>
+                <th>Medicine</th>
                 <th>Amount</th>
                 <th>actions</th>
             </tr>
@@ -17,6 +19,8 @@
         {% for provide in provides %}
             <tr>
                 <td>{{ provide.id }}</td>
+                <td>{{ provide.provider }}</td>
+                <td>{{ provide.medicine }}</td>
                 <td>{{ provide.amount }}</td>
                 <td>
                     <a href="{{ path('app_provides_show', {'id': provide.id}) }}">show</a>

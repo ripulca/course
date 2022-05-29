@@ -2,10 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\User;
 use App\Entity\Custom;
+use App\Repository\UserRepository;
 use Symfony\Component\Form\AbstractType;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class CustomType extends AbstractType
 {
@@ -14,7 +20,7 @@ class CustomType extends AbstractType
         $builder
             ->add('price')
             ->add('address')
-            ->add('courier')
+            ->add('courier', CheckboxType::class)
         ;
     }
 

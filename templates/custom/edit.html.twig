@@ -1,12 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Custom{% endblock %}
+{% block title %}Place an order{% endblock %}
 
 {% block body %}
-    <h1>Edit Custom</h1>
-
-    {{ include('custom/_form.html.twig', {'button_label': 'Update'}) }}
-
+    <h1 class="h3 mb-3 font-weight-normal">Place an order</h1>
+    <form name="custom" method="post" action="{{ path('app_custom_edit', {'id': custom.id}) }}">
+        {% if is_granted('ROLE_DOCTOR') %}
+            <label>Customer</label>
+            <select name="customer">
+            {% for customer in customers %}
+                <option value="{{ customer.id }}">{{ customer.name }} {{ customer.surname }} {{ customer.patronymic }}</option>
+            {% endfor %}
+        {% endif %}
+        <label for="inputAddress">Address</label>
+        <input type="text" name="address" id="inputAddress" class="form-control" value="{{ custom.address}}" required>
+        <label>Courier</label>
+        <input type="checkbox" name="courier" id="inputCourier">
+        <br>
+        <button class="btn btn-lg btn-primary" type="submit">
+            Submit
+        </button>
+    </form>
+    <br>
     <a href="{{ path('app_custom_index') }}">back to list</a>
 
     {{ include('custom/_delete_form.html.twig') }}

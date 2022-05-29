@@ -20,6 +20,7 @@
                 {% else %}
                     <p colspan="5">no records found, please, come back later</p>
                 {% endfor %}
+                <a href="{{ path('app_custom_edit', {'id': custom.id}) }}">place an order</a>
             </div> 
         </div>
     </div>

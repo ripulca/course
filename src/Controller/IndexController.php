@@ -45,23 +45,28 @@ class IndexController extends AbstractController
         }
         $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
         $role=$user->getRoles();
+        $doctor=$user->getDoctor();
         if($role[0]=='ROLE_CUSTOMER'){
             $cur_custom=$entityManager->getRepository(Custom::class)->findOneBy([
                 'customer'=>$user,
                 'is_in_cart'=>true,
             ]);
         }
-        else{
+        else if($role[0]=='ROLE_DOCTOR'){
             $cur_custom=$entityManager->getRepository(Custom::class)->findOneBy([
-                'doctor'=>$user,
+                'doctor'=>$doctor,
                 'is_in_cart'=>true,
             ]);
         }
         if ($cur_custom) {
             $medicines=$entityManager->getRepository(Contains::class)->getMedsListByCustom($cur_custom);
         }
+        else{
+            return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
+        }
         return $this->render('cart/cart.html.twig', [
             'user'=>$user,
+            'custom'=>$cur_custom,
             'medicines'=>$medicines,
         ]);
     }
@@ -92,14 +97,15 @@ class IndexController extends AbstractController
         $medicine=$entityManager->getRepository(Medicine::class)->findOneById($id);
         $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
         $role=$user->getRoles();
+        $doctor=$user->getDoctor();
         if ($role[0]=='ROLE_CUSTOMER') {
             $cur_custom=$entityManager->getRepository(Custom::class)->findOneBy([
                 'customer'=>$user,
                 'is_in_cart'=>true,
             ]);}
-        else{
+        else if ($role[0]=='ROLE_DOCTOR'){
             $cur_custom=$entityManager->getRepository(Custom::class)->findOneBy([
-                'doctor'=>$user,
+                'doctor'=>$doctor,
                 'is_in_cart'=>true,
             ]);
         }
@@ -119,18 +125,17 @@ class IndexController extends AbstractController
                 $contains->setCustom($cur_custom);
                 $contains->setMedicine($medicine);
                 $contains->setAmount(1);
-                $new_price=$cur_custom->getPrice();
-                $cur_custom->setPrice($new_price+$medicine->getPrice());
-                $entityManager->getRepository(Custom::class)->add($cur_custom, true);
                 $entityManager->getRepository(Contains::class)->add($contains, true);
             }
+            $cur_custom->setPrice($cur_custom->getPrice()+$medicine->getPrice());
+            $entityManager->getRepository(Custom::class)->add($cur_custom, true);
         }
         else{
             $custom=new Custom();
             if ($role[0]=='ROLE_DOCTOR') {
-                $customer=$entityManager->getRepository(User::class)->getAllCustomers();
+                $customer=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
                 $customer=$customer[0];
-                $custom->setDoctor($user);
+                $custom->setDoctor($user->getDoctor());
             }
             else{
                 $customer=$user;
@@ -143,13 +148,12 @@ class IndexController extends AbstractController
             $custom->setCustomer($customer);
             $custom->setIsInCart(true);
             $custom->setAddress($customer->getCity());
-            if ($entityManager->getRepository(Custom::class)->add($custom, true)) {
-                $contains=new Contains();
-                $contains->setCustom($custom);
-                $contains->setMedicine($medicine);
-                $contains->setAmount(1);
-                $entityManager->getRepository(Contains::class)->add($contains, true);
-            }
+            $entityManager->getRepository(Custom::class)->add($custom, true);
+            $contains=new Contains();
+            $contains->setCustom($custom);
+            $contains->setMedicine($medicine);
+            $contains->setAmount(1);
+            $entityManager->getRepository(Contains::class)->add($contains, true);
         }
         return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -12,7 +12,6 @@
                 <th>Price</th>
                 <th>Payment_date</th>
                 <th>Complete_date</th>
-                <th>Is_in_cart</th>
                 <th>Address</th>
                 <th>actions</th>
             </tr>
@@ -27,7 +26,6 @@
                 <td>{{ custom.address }}</td>
                 <td>
                     <a href="{{ path('app_custom_show', {'id': custom.id}) }}">show</a>
-                    <a href="{{ path('app_custom_edit', {'id': custom.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

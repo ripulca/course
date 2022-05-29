@@ -22,16 +22,20 @@ class CustomController extends AbstractController
         $entityManager = $doctrine->getManager();
         $session = $request->getSession();
         $email = $session->get(Security::LAST_USERNAME) ?? null;      
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
         if($email!=NULL){
             if (!$session->isStarted()) {
                 $session->start();
             }
+            $customs=$user->getCustoms();
         }
-        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        else{
+            $customs=$customRepository->findAll();
+        }
         
         return $this->render('custom/index.html.twig', [
             'user'=>$user,
-            'customs' => $customRepository->findAll(),
+            'customs' => $customs,
         ]);
     }
 
@@ -55,28 +59,70 @@ class CustomController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_custom_show', methods: ['GET'])]
-    public function show(Custom $custom): Response
+    public function show(Request $request, ManagerRegistry $doctrine, Custom $custom): Response
     {
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;      
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        if($email!=NULL){
+            if (!$session->isStarted()) {
+                $session->start();
+            }
+        }
         return $this->render('custom/show.html.twig', [
+            'user'=>$user,
             'custom' => $custom,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_custom_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Custom $custom, CustomRepository $customRepository): Response
+    public function edit(Request $request, ManagerRegistry $doctrine, Custom $custom, CustomRepository $customRepository): Response
     {
-        $form = $this->createForm(CustomType::class, $custom);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $customRepository->add($custom, true);
-
-            return $this->redirectToRoute('app_custom_index', [], Response::HTTP_SEE_OTHER);
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;      
+        if($email!=NULL){
+            if (!$session->isStarted()) {
+                $session->start();
+            }
         }
-
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $role=$user->getRoles();
+        $role=$role[0];
+        $customers=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
+        if (isset($_POST["address"])) {
+            // $form = $_POST["custom"];
+            if($role=="ROLE_DOCTOR"){
+                $customer_id=$_POST['customer'];
+                $customer=$entityManager->getRepository(User::class)->findOneById($customer_id);
+            }
+            else{
+                $customer=$user;
+            }
+            $address=$_POST['address'];
+            $custom->setAddress($address);
+            if(isset($_POST["courier"])){
+                $couriers=$entityManager->getRepository(User::class)->findCourierWithCountCustoms($customer->getCity());
+                
+                if($couriers){
+                    $courier_id=$couriers[0]['id'];
+                    $courier=$entityManager->getRepository(User::class)->findOneById($courier_id);
+                    $custom->setCourier($courier);
+                }
+                else{
+                    echo 'so far there is no delivery in your city';
+                }
+            }
+            $custom->setIsInCart(false);
+            $customRepository->add($custom, true);
+            return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
+        }
+        // var_dump($customers);
         return $this->renderForm('custom/edit.html.twig', [
+            'user'=>$user,
+            'customers'=>$customers,
             'custom' => $custom,
-            'form' => $form,
         ]);
     }
 
@@ -87,6 +133,6 @@ class CustomController extends AbstractController
             $customRepository->remove($custom, true);
         }
 
-        return $this->redirectToRoute('app_custom_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
     }
 }

@@ -119,4 +119,10 @@ class Doctor
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        $user=$this->getUserProfile();
+        return $user->getName()." ".$user->getSurname()." ".$user->getPatronymic();
+    }
 }
