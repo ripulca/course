@@ -43,6 +43,9 @@ class Custom
     #[ORM\Column(type: 'string', length: 255)]
     private $address;
 
+    #[ORM\Column(type: 'boolean')]
+    private $is_ready;
+
     public function __construct()
     {
         $this->contains = new ArrayCollection();
@@ -175,6 +178,23 @@ class Custom
     public function setAddress(string $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function isIsReady(): ?bool
+    {
+        return $this->is_ready;
+    }
+
+    public function isis_ready()
+    {
+        return $this->is_ready ? 'ready' : 'not ready';
+    }
+
+    public function setIsReady(bool $is_ready): self
+    {
+        $this->is_ready = $is_ready;
 
         return $this;
     }

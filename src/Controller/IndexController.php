@@ -147,6 +147,7 @@ class IndexController extends AbstractController
             $custom->setCompleteDate($date);
             $custom->setCustomer($customer);
             $custom->setIsInCart(true);
+            $custom->setIsReady(false);
             $custom->setAddress($customer->getCity());
             $entityManager->getRepository(Custom::class)->add($custom, true);
             $contains=new Contains();

@@ -29,7 +29,8 @@ class CustomCrudController extends AbstractCrudController
             DateTimeField::new('payment_date'),
             DateTimeField::new('complete_date'),
             TextEditorField::new('address'),
-            BooleanField::new('is_in_cart')
+            BooleanField::new('is_in_cart'),
+            BooleanField::new('is_ready')
         ];
     }
 }

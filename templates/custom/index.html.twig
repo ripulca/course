@@ -15,8 +15,11 @@
                 <th>Price</th>
                 <th>Payment_date</th>
                 <th>Complete_date</th>
-                <th>Address</th>
                 <th>actions</th>
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                <th>Status</th>
+                {% endif %}
+                <th>Address</th>
             </tr>
         </thead>
         <tbody>
@@ -27,8 +30,17 @@
                 <td>{{ custom.paymentDate ? custom.paymentDate|date('Y-m-d') : '' }}</td>
                 <td>{{ custom.completeDate ? custom.completeDate|date('Y-m-d') : '' }}</td>
                 <td>{{ custom.address }}</td>
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                <td>{{ custom.is_ready }}</td>
+                {% endif %}
                 <td>
                     <a href="{{ path('app_custom_show', {'id': custom.id}) }}">show</a>
+                    {% if is_granted('ROLE_COURIER') %}
+                        <form method="post" action="{{ path('app_custom_ready', {'id': custom.id}) }}">
+                            <input type="hidden" name="id" value="{{ custom.id }}">
+                            <button class="btn">Make ready</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}

@@ -37,9 +37,9 @@ class AppFixtures extends Fixture
             if ($i==0) {
                 $customer=$user;
             }
-            if ($i==2) {
-                $doctor_user=$user;
-            }
+            // if ($i==2) {
+            //     $doctor_user=$user;
+            // }
 
             $provider = new Provider();      //providers
             $provider->setName('provider_'.$i);
@@ -71,6 +71,7 @@ class AppFixtures extends Fixture
                 $custom->setCustomer($customer);
                 $custom->setIsInCart(false);
                 $custom->setAddress('address'.$j);
+                $custom->setIsReady(true);
                 $manager->persist($custom);
 
                 $contains = new Contains();      //contains
@@ -79,7 +80,7 @@ class AppFixtures extends Fixture
                 $contains->setAmount($j+1);
                 $manager->persist($contains);
             }
-            if($i==1){
+            if($i==2){
                 $hospital= new Hospital();
                 $hospital->setName('Областная больница №1');
                 $hospital->setCity('Омск');
@@ -88,7 +89,7 @@ class AppFixtures extends Fixture
                 $manager->persist($hospital);
 
                 $doctor = new Doctor();    //doctor
-                $doctor->setUserProfile($doctor_user);
+                $doctor->setUserProfile($user);
                 $doctor->setHospital($hospital);
                 $doctor->setSpecialization('Терапевт');
                 $doctor->setPost('Заведующий(-ая) отделением Терапевтической службы');

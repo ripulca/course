@@ -41,7 +41,7 @@ class ContainsRepository extends ServiceEntityRepository
 
     public function getMedsListByCustom($custom){
         return $this->createQueryBuilder('c')
-            ->join('App\Entity\Medicine', 'm', 'WITH', 'c.medicine = m')
+           ->join('App\Entity\Medicine', 'm', 'WITH', 'c.medicine = m')
            ->andWhere('c.custom = :val')
            ->setParameter('val', $custom)
            ->orderBy('c.id', 'ASC')

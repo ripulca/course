@@ -66,7 +66,7 @@ class MedicineRepository extends ServiceEntityRepository
     public function searchByQuery(string $query, $currentPage=1){
         $Query=$this->createQueryBuilder('m')
         ->where("m.name LIKE :query")
-        ->setParameter("query", "%". $query, "%")
+        ->setParameter("query", "%".$query."%")
         ->getQuery();
         $paginator = $this->paginate($Query, $currentPage);
         return $paginator;

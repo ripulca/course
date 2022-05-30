@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220528190418 extends AbstractMigration
+final class Version20220530133152 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -31,7 +31,7 @@ final class Version20220528190418 extends AbstractMigration
         $this->addSql('CREATE TABLE contains (id INT NOT NULL, custom_id INT NOT NULL, medicine_id INT NOT NULL, amount INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_8EFA6A7E614A603A ON contains (custom_id)');
         $this->addSql('CREATE INDEX IDX_8EFA6A7E2F7D140A ON contains (medicine_id)');
-        $this->addSql('CREATE TABLE custom (id INT NOT NULL, customer_id INT NOT NULL, courier_id INT DEFAULT NULL, doctor_id INT DEFAULT NULL, price NUMERIC(10, 2) NOT NULL, payment_date DATE NOT NULL, complete_date DATE NOT NULL, is_in_cart BOOLEAN NOT NULL, address VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE custom (id INT NOT NULL, customer_id INT NOT NULL, courier_id INT DEFAULT NULL, doctor_id INT DEFAULT NULL, price NUMERIC(10, 2) NOT NULL, payment_date DATE NOT NULL, complete_date DATE NOT NULL, is_in_cart BOOLEAN NOT NULL, address VARCHAR(255) NOT NULL, is_ready BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_F584169B9395C3F3 ON custom (customer_id)');
         $this->addSql('CREATE INDEX IDX_F584169BE3D8151C ON custom (courier_id)');
         $this->addSql('CREATE INDEX IDX_F584169B87F4FB17 ON custom (doctor_id)');

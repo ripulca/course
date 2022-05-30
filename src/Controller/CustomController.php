@@ -5,6 +5,7 @@ namespace App\Controller;
 use Knp\Snappy\Pdf;
 use App\Entity\User;
 use App\Entity\Custom;
+use App\Entity\Contains;
 use App\Form\CustomType;
 use App\Repository\CustomRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -38,7 +39,7 @@ class CustomController extends AbstractController
                 $customs=$user->getDoctor()->getCustoms();
             }
             else{
-                $customs=$user->getCustomsToDeliver();
+                $customs=$entityManager->getRepository(Custom::class)->getCustomsToDeliver($user->getId());
             }
         }
         else{
@@ -63,11 +64,15 @@ class CustomController extends AbstractController
         ]);
     }
 
-    // #[Route('/', name: 'app_custom_report', methods: ['POST'])]
-    // public function report(Request $request, Pdf $knpSnappyPdf): Response
-    // {
-        
-    // }
+    #[Route('/ready/{id}', name: 'app_custom_ready', methods: ['POST'])]
+    public function makeReady(Request $request, ManagerRegistry $doctrine, int $id): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $custom=$entityManager->getRepository(Custom::class)->findOneById($id);
+        $custom->setIsReady(true);
+        $entityManager->getRepository(Custom::class)->add($custom, true);
+        return $this->redirectToRoute('app_custom_index', [], Response::HTTP_SEE_OTHER);
+    }
 
     #[Route('/new', name: 'app_custom_new', methods: ['GET', 'POST'])]
     public function new(Request $request, CustomRepository $customRepository): Response
@@ -100,9 +105,11 @@ class CustomController extends AbstractController
                 $session->start();
             }
         }
+        $medicines=$entityManager->getRepository(Contains::class)->getMedsListByCustom($custom);
         return $this->render('custom/show.html.twig', [
             'user'=>$user,
             'custom' => $custom,
+            'medicines' => $medicines
         ]);
     }
 
@@ -145,6 +152,17 @@ class CustomController extends AbstractController
                 }
             }
             $custom->setIsInCart(false);
+            $date = new \DateTime();
+            $add_date = new \DateTime();
+            $add_date->add(new \DateInterval('P7D'));
+            if(isset($_POST['payment'])){
+                $custom->setPaymentDate($date);
+                $custom->setCompleteDate($add_date);
+            }
+            else{
+                $custom->setCompleteDate($add_date);
+                $custom->setPaymentDate($add_date);
+            }
             $customRepository->add($custom, true);
             return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
         }

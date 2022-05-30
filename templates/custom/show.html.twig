@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <th>Price</th>
-                <td>{{ custom.price }}</td>
+                <td>{{ custom.price }}₽</td>
             </tr>
             <tr>
                 <th>Payment_date</th>
@@ -39,6 +39,16 @@
                 <th>Address</th>
                 <td>{{ custom.address }}</td>
             </tr>
+            <tr>
+                <th>Medicines</th>
+                <td>
+                    <select name="medicine">
+                    {% for medicine in medicines %}
+                        <option value="{{ medicine.id }}">{{ medicine.medicine.name }} {{ medicine.medicine.price }}₽ {{ medicine.amount }}шт.</option>
+                    {% endfor %}
+                </td>
+            </tr>
+
         </tbody>
     </table>
 

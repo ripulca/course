@@ -41,6 +41,16 @@ class CustomRepository extends ServiceEntityRepository
         }
     }
 
+    public function getCustomsToDeliver($id){
+        return $this->createQueryBuilder('c')
+           ->andWhere('c.courier = :val')
+           ->andWhere('c.is_ready = false')
+           ->setParameter('val', $id)
+           ->orderBy('c.id', 'ASC')
+           ->getQuery()
+           ->getResult();
+    }
+
 //    /**
 //     * @return Custom[] Returns an array of Custom objects
 //     */
