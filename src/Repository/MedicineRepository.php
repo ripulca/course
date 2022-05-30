@@ -62,6 +62,15 @@ class MedicineRepository extends ServiceEntityRepository
 
         return $paginator;
     }
+
+    public function searchByQuery(string $query, $currentPage=1){
+        $Query=$this->createQueryBuilder('m')
+        ->where("m.name LIKE :query")
+        ->setParameter("query", "%". $query, "%")
+        ->getQuery();
+        $paginator = $this->paginate($Query, $currentPage);
+        return $paginator;
+    }
 //    /**
 //     * @return Medicine[] Returns an array of Medicine objects
 //     */

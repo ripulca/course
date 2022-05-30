@@ -45,6 +45,36 @@ class MedicineController extends AbstractController
         ]);
     }
 
+    #[Route('/search', name: 'app_medicine_search', methods: ['GET'])]
+    public function search(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1): Response
+    {
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;      
+        if($email!=NULL){
+            if (!$session->isStarted()) {
+                $session->start();
+            }
+        }
+        $user=$userRepository->findOneByEmail($email);
+        $query=$request->query->get('q');
+        $medicines=NULL;
+        $maxPages=1;
+        if ($query) {
+            $medicines= $medicineRepository->searchByQuery($query);
+            $totalMedicinesReturned = $medicines->getIterator()->count();
+            $totalMedicines = $medicines->count();
+            if($totalMedicines!=0 && $totalMedicinesReturned!=0){
+                $maxPages = ceil($totalMedicines / $totalMedicinesReturned);
+            }
+        }
+        return $this->render('medicine/index.html.twig', [
+            'medicines' => $medicines,
+            'user'=>$user,
+            'maxPages' => $maxPages,
+            'thisPage'=>$page,
+        ]);
+    }
+
     #[Route('/{page}', name: 'app_medicine_pages_index', requirements: ['page' => '\d+'], methods: ['GET'])]
     public function page_index(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1): Response
     {
