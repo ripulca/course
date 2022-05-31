@@ -39,6 +39,16 @@ class ProvidesRepository extends ServiceEntityRepository
         }
     }
 
+    public function getMedAmount($medicine)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('SUM(c.amount) AS amount')
+            ->andWhere('c.medicine = :val')
+            ->setParameter('val', $medicine)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Provides[] Returns an array of Provides objects
 //     */

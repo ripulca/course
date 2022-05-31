@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Custom;
 use App\Entity\Contains;
 use App\Entity\Medicine;
+use App\Entity\Provides;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -116,8 +117,11 @@ class IndexController extends AbstractController
             ]);
             if($if_contains){
                 $cur_amount=$if_contains->getAmount();
-                $if_contains->setAmount($cur_amount+1);
-                $entityManager->getRepository(Contains::class)->add($if_contains, true);
+                $in_stock=$entityManager->getRepository(Provides::class)->getMedAmount($medicine);
+                if($in_stock[0]['amount']>=($cur_amount+1)){
+                    $if_contains->setAmount($cur_amount+1);
+                    $entityManager->getRepository(Contains::class)->add($if_contains, true);
+                }
                 return $this->redirectToRoute('app_medicine_index', [], Response::HTTP_SEE_OTHER);
             }
             else{

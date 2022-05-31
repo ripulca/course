@@ -27,11 +27,11 @@
                 <th>Price</th>
                 <th>Payment_date</th>
                 <th>Complete_date</th>
-                <th>actions</th>
+                <th>Address</th>
                 {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
                 <th>Status</th>
                 {% endif %}
-                <th>Address</th>
+                <th>actions</th>
             </tr>
         </thead>
         <tbody>

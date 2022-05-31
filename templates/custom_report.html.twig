@@ -1,0 +1,37 @@
+{% block title %}Custom index{% endblock %}
+
+{% block body %}
+    <h1>Customs</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Price</th>
+                <th>Payment_date</th>
+                <th>Complete_date</th>
+                <th>Address</th>
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                <th>Status</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for custom in customs %}
+            <tr>
+                <td>{{ custom.id }}</td>
+                <td>{{ custom.price }}</td>
+                <td>{{ custom.paymentDate ? custom.paymentDate|date('Y-m-d') : '' }}</td>
+                <td>{{ custom.completeDate ? custom.completeDate|date('Y-m-d') : '' }}</td>
+                <td>{{ custom.address }}</td>
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                    <td>{{ custom.is_ready }}</td>
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

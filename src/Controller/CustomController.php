@@ -48,8 +48,7 @@ class CustomController extends AbstractController
         
         $customers=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
         if(isset($_POST['makeReport'])){
-            $html =$this->renderView('custom/index.html.twig', [
-                'user'=>$user,
+            $html =$this->renderView('custom_report.html.twig', [
                 'customs' => $customs,
             ]);
             $knpSnappyPdf->setOption('encoding', 'utf-8');
@@ -85,8 +84,7 @@ class CustomController extends AbstractController
         ]);
         
         if(isset($_POST['makeReport'])){
-            $html =$this->renderView('custom/index.html.twig', [
-                'user'=>$user,
+            $html =$this->renderView('custom_report.html.twig', [
                 'customs' => $customs,
             ]);
             $knpSnappyPdf->setOption('encoding', 'utf-8');
