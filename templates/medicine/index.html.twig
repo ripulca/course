@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Medicine index{% endblock %}
+{% block title %}Medicines{% endblock %}
 
 {% block body %}
     <h1>Medicine index</h1>
-
+    <br>
     <form class="form-inline my-2 my-lg-0" action="{{ path("app_medicine_search") }}" method="get">
         <input class="form-control mr-sm-2" type="search" aria-label="Search" name="q">
-        <button class="btn btn-default my-2 my-sm-0" type="submit">Найти лекарство</button>
+        <button class="btn btn-default my-2 my-sm-0 active" type="submit">Найти лекарство</button>
     </form>
-
+    <br>
     <div class="container">
         <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light">
             <div class="row">

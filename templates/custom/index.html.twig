@@ -8,6 +8,18 @@
         <input type="hidden" name="makeReport" value="true">
         <button type="submit" name="submit">Get report</button>
     </form>
+    <br>
+    {% if is_granted('ROLE_DOCTOR') %}
+        <form method="get" action="{{ path('get_customer_history') }}">
+            <label>Customer</label>
+                <select name="customer">
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.surname }} {{ customer.name }} {{ customer.patronymic }}</option>
+                {% endfor %}
+                </select>
+            <button type="submit" name="submit">Get history</button>
+        </form>
+    {% endif %}
     <table class="table">
         <thead>
             <tr>

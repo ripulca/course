@@ -46,6 +46,7 @@ class CustomController extends AbstractController
             $customs=$customRepository->findAll();
         }
         
+        $customers=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
         if(isset($_POST['makeReport'])){
             $html =$this->renderView('custom/index.html.twig', [
                 'user'=>$user,
@@ -59,6 +60,44 @@ class CustomController extends AbstractController
         }
 
         return $this->render('custom/index.html.twig', [
+            'customers' => $customers,
+            'user'=>$user,
+            'customs' => $customs,
+        ]);
+    }
+    #[Route('/history', name: 'get_customer_history', methods: ['GET'])]
+    public function search(Request $request, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $session = $request->getSession();
+        $email = $session->get(Security::LAST_USERNAME) ?? null;      
+        $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        if($email!=NULL){
+            if (!$session->isStarted()) {
+                $session->start();
+            }            
+        }
+        $customers=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
+        $customer=$entityManager->getRepository(User::class)->findOneById($request->query->get('customer'));
+        $customs=$entityManager->getRepository(Custom::class)->findBy([
+            'customer' => $customer,
+            'doctor' =>$user->getDoctor(),
+        ]);
+        
+        if(isset($_POST['makeReport'])){
+            $html =$this->renderView('custom/index.html.twig', [
+                'user'=>$user,
+                'customs' => $customs,
+            ]);
+            $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+        }
+
+        return $this->render('custom/index.html.twig', [
+            'customers' => $customers,
             'user'=>$user,
             'customs' => $customs,
         ]);
@@ -131,8 +170,7 @@ class CustomController extends AbstractController
         if (isset($_POST["address"])) {
             // $form = $_POST["custom"];
             if($role=="ROLE_DOCTOR"){
-                $customer_id=$_POST['customer'];
-                $customer=$entityManager->getRepository(User::class)->findOneById($customer_id);
+                $customer=$entityManager->getRepository(User::class)->findOneById($_POST['customer']);
             }
             else{
                 $customer=$user;
