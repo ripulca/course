@@ -50,6 +50,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    public function getDocCustomers($doctor){
+        return $this->createQueryBuilder('u')
+           ->join('App\Entity\Custom', 'c', 'WITH', 'c.customer=u.id')
+           ->andWhere('c.doctor = :val')
+           ->setParameter('val', $doctor)
+           ->getQuery()
+           ->getResult();
+    }
+
     public function findCourierWithCountCustoms($city, $role='ROLE_COURIER'){
         return $this->createQueryBuilder('u')
            ->select('u.id')

@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
+use Knp\Snappy\Pdf;
 use App\Entity\User;
-use App\Entity\Custom;
-use App\Entity\Contains;
 use App\Entity\Medicine;
 use App\Form\MedicineType;
 use App\Repository\UserRepository;
@@ -14,13 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/medicines')]
 class MedicineController extends AbstractController
 {
-    #[Route('/', name: 'app_medicine_index', methods: ['GET'])]
-    public function index(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1): Response
+    #[Route('/', name: 'app_medicine_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1, Pdf $knpSnappyPdf): Response
     {
         $session = $request->getSession();
         $email = $session->get(Security::LAST_USERNAME) ?? null;      
@@ -37,6 +37,26 @@ class MedicineController extends AbstractController
         if($totalMedicines!=0 && $totalMedicinesReturned!=0){
             $maxPages = ceil($totalMedicines / $totalMedicinesReturned);
         }
+        
+        if(isset($_POST['makeReport'])){
+            $medicines=$medicineRepository->getAllMed();
+            $pr_amount=$medicineRepository->getMedStatPr();
+            $cn_amount=$medicineRepository->getMedStatCn();
+            $count=count( $pr_amount);
+            // var_dump($count);die();
+            $html =$this->renderView('medicine_report.html.twig', [
+                'user' => $user,
+                'medicines' => $medicines,
+                'in_stocks'=>$pr_amount,
+                'boughts'=>$cn_amount,
+                'count' =>$count,
+            ]);
+            $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
+        }
         return $this->render('medicine/index.html.twig', [
             'medicines' => $medicines,
             'user'=>$user,
@@ -45,8 +65,8 @@ class MedicineController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'app_medicine_search', methods: ['GET'])]
-    public function search(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1): Response
+    #[Route('/search', name: 'app_medicine_search', methods: ['GET', 'POST'])]
+    public function search(Request $request, MedicineRepository $medicineRepository, UserRepository $userRepository, $page=1, Pdf $knpSnappyPdf): Response
     {
         $session = $request->getSession();
         $email = $session->get(Security::LAST_USERNAME) ?? null;      
@@ -66,6 +86,18 @@ class MedicineController extends AbstractController
             if($totalMedicines!=0 && $totalMedicinesReturned!=0){
                 $maxPages = ceil($totalMedicines / $totalMedicinesReturned);
             }
+        }
+        
+        if(isset($_POST['makeReport'])){
+            $html =$this->renderView('medicine_report.html.twig', [
+                'user' => $user,
+                'medicines' => $medicines,
+            ]);
+            $knpSnappyPdf->setOption('encoding', 'utf-8');
+            return new PdfResponse(
+                $knpSnappyPdf->getOutputFromHtml($html),
+                'Report.pdf',
+            );
         }
         return $this->render('medicine/index.html.twig', [
             'medicines' => $medicines,

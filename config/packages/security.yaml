@@ -36,7 +36,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/medicines/medicine, roles:  [ROLE_CUSTOMER, ROLE_DOCTOR] }
         - { path: ^/cart, roles: [ROLE_CUSTOMER, ROLE_DOCTOR] }
-        - { path: ^/customs, roles: [ROLE_COURIER, ROLE_CUSTOMER] }
+        - { path: ^/customs, roles: [ROLE_COURIER, ROLE_CUSTOMER, ROLE_DOCTOR] }
 
 when@test:
     security:

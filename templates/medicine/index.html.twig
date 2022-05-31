@@ -10,27 +10,42 @@
         <button class="btn btn-default my-2 my-sm-0 active" type="submit">Найти лекарство</button>
     </form>
     <br>
-    <div class="container">
-        <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light">
-            <div class="row">
-                {% for medicine in medicines %}
-                        <div class="col-md-5 p-lg-2 mx-auto">
-                            <a href="{{ path('app_medicine_show', {'id': medicine.id}) }}">
-                                <div>{{medicine.name}}</div>
-                                <div>{{medicine.price}}₽</div>
-                            </a>
-                            {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
-                                {{ include('medicine/_add_to_cart.html.twig') }}
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('app_medicine_edit', {'id': medicine.id}) }}" class="link-secondary">edit</a>
-                            {% endif %}
-                        </div>
-                {% else %}
-                    <p colspan="5">no records found, please, come back later</p>
-                {% endfor %}
-            </div> 
-        </div>
+    <form method="post">
+        <input type="hidden" name="makeReport" value="true">
+        <button type="submit" name="submit">Get report</button>
+    </form>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+                <tr>
+                    <td>
+                        <a href="{{ path('app_medicine_show', {'id': medicine.id}) }}">
+                            <div>{{medicine.name}}</div>
+                        </a>
+                    </td>
+                    <td>{{medicine.price}}₽</td>
+                    {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
+                        <td>{{ include('medicine/_add_to_cart.html.twig') }}</td>
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td><a href="{{ path('app_medicine_edit', {'id': medicine.id}) }}" class="link-secondary">edit</a></td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">no records found, please, come back later</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
         {% if maxPages > 1 %}
         <ul class="pagination pagination-sm">
             {# `«` arrow  #}

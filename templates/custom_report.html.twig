@@ -1,17 +1,16 @@
-{% block title %}Custom index{% endblock %}
-
 {% block body %}
-    <h1>Customs</h1>
+    <h1>Пользователь: {{user.surname}} {{user.name}} {{user.patronymic}}</h1>
+    <h1>Заказы</h1>
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Price</th>
-                <th>Payment_date</th>
-                <th>Complete_date</th>
-                <th>Address</th>
+                <th>Номер</th>
+                <th>Цена</th>
+                <th>Дата оплаты</th>
+                <th>Дата доставки</th>
+                <th>Адрес</th>
                 {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
-                <th>Status</th>
+                <th>Статус</th>
                 {% endif %}
             </tr>
         </thead>

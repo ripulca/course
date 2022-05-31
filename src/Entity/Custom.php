@@ -189,7 +189,7 @@ class Custom
 
     public function isis_ready()
     {
-        return $this->is_ready ? 'ready' : 'not ready';
+        return $this->is_ready ? 'готов' : 'не готов';
     }
 
     public function setIsReady(bool $is_ready): self

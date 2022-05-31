@@ -51,6 +51,15 @@ class MedicineRepository extends ServiceEntityRepository
 
         return $paginator;
     }
+
+    public function getAllMed()
+    {
+        // Create our query
+        return $this->createQueryBuilder('m')
+            ->orderBy('m.id')
+            ->getQuery()
+            ->getResult();
+    }
     
     public function paginate($dql, $page = 1, $limit = 8)
     {
@@ -70,6 +79,26 @@ class MedicineRepository extends ServiceEntityRepository
         ->getQuery();
         $paginator = $this->paginate($Query, $currentPage);
         return $paginator;
+    }
+
+    public function getMedStatPr(){
+        return $this->createQueryBuilder('m')
+        ->select('SUM(p.amount) AS in_stock')
+        ->join('App\Entity\Provides', 'p', 'WITH', 'p.medicine=m')
+        ->groupBy('m.id')
+        ->orderBy('m.id')
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function getMedStatCn(){
+        return $this->createQueryBuilder('m')
+        ->select('SUM(c.amount) AS bought')
+        ->join('App\Entity\Contains', 'c', 'WITH', 'c.medicine=m')
+        ->groupBy('m.id')
+        ->orderBy('m.id')
+        ->getQuery()
+        ->getResult();
     }
 //    /**
 //     * @return Medicine[] Returns an array of Medicine objects

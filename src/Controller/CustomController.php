@@ -26,6 +26,7 @@ class CustomController extends AbstractController
         $session = $request->getSession();
         $email = $session->get(Security::LAST_USERNAME) ?? null;      
         $user=$entityManager->getRepository(User::class)->findOneByEmail($email);
+        $customers=NULL;
         if($email!=NULL){
             if (!$session->isStarted()) {
                 $session->start();
@@ -37,6 +38,7 @@ class CustomController extends AbstractController
             }
             else if($role=='ROLE_DOCTOR'){
                 $customs=$user->getDoctor()->getCustoms();
+                $customers=$entityManager->getRepository(User::class)->getDocCustomers($user->getDoctor());
             }
             else{
                 $customs=$entityManager->getRepository(Custom::class)->getCustomsToDeliver($user->getId());
@@ -46,9 +48,9 @@ class CustomController extends AbstractController
             $customs=$customRepository->findAll();
         }
         
-        $customers=$entityManager->getRepository(User::class)->findByRole('ROLE_CUSTOMER');
         if(isset($_POST['makeReport'])){
             $html =$this->renderView('custom_report.html.twig', [
+                'user' => $user,
                 'customs' => $customs,
             ]);
             $knpSnappyPdf->setOption('encoding', 'utf-8');
@@ -64,7 +66,7 @@ class CustomController extends AbstractController
             'customs' => $customs,
         ]);
     }
-    #[Route('/history', name: 'get_customer_history', methods: ['GET'])]
+    #[Route('/history', name: 'get_customer_history', methods: ['GET', 'POST'])]
     public function search(Request $request, ManagerRegistry $doctrine, Pdf $knpSnappyPdf): Response
     {
         $entityManager = $doctrine->getManager();
