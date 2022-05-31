@@ -6,6 +6,7 @@ use Knp\Snappy\Pdf;
 use App\Entity\User;
 use App\Entity\Custom;
 use App\Entity\Contains;
+use App\Entity\Provides;
 use App\Form\CustomType;
 use App\Repository\CustomRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -108,6 +109,21 @@ class CustomController extends AbstractController
     {
         $entityManager = $doctrine->getManager();
         $custom=$entityManager->getRepository(Custom::class)->findOneById($id);
+        $contains=$custom->getContains();
+        foreach($contains as $contain){
+            $con_am=$contain->getAmount();
+            $provides=$entityManager->getRepository(Provides::class)->findBy(['medicine'=>$contain->getMedicine()]);
+            foreach($provides as &$provide){
+                if($provide->getAmount()>=$con_am){
+                    $provide->setAmount($provide->getAmount()-$con_am);
+                }
+                else{
+                    $con_am=$con_am-$provide->getAmount();
+                    $provide->setAmount(0);
+                }
+                $entityManager->getRepository(Provides::class)->add($provide, true);
+            }
+        }
         $custom->setIsReady(true);
         $entityManager->getRepository(Custom::class)->add($custom, true);
         return $this->redirectToRoute('app_custom_index', [], Response::HTTP_SEE_OTHER);

@@ -47,7 +47,8 @@
                 {% endif %}
                 <td>
                     <a href="{{ path('app_custom_show', {'id': custom.id}) }}">show</a>
-                    {% if is_granted('ROLE_COURIER') %}
+                    
+                    {% if ((is_granted('ROLE_CUSTOMER') and custom.is_ready=='не готов') or is_granted('ROLE_COURIER')) %}
                         <form method="post" action="{{ path('app_custom_ready', {'id': custom.id}) }}">
                             <input type="hidden" name="id" value="{{ custom.id }}">
                             <button class="btn">Make ready</button>
