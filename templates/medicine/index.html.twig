@@ -19,8 +19,11 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Pharmgroup</th>
                 <th>Price</th>
-                <th>actions</th>
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR') or is_granted('ROLE_ADMIN')) %}
+                    <th>actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -31,6 +34,7 @@
                             <div>{{medicine.name}}</div>
                         </a>
                     </td>
+                    <td>{{medicine.pharmgroup}}</td>
                     <td>{{medicine.price}}₽</td>
                     {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
                         <td>{{ include('medicine/_add_to_cart.html.twig') }}</td>

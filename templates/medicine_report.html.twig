@@ -3,8 +3,9 @@
     <table class="table">
         <thead>
             <tr>
-                <th>id</th>
                 <th>Название</th>
+                <th>Фармгруппа</th>
+                <th>Действие</th>
                 <th>Цена</th>
                 <th>В наличии</th>
                 <th>Куплено за все время</th>
@@ -13,8 +14,9 @@
         <tbody>
             {% for i in range(0,count-1) %}
                 <tr>
-                    <td>{{medicines[i].id}}</td>
                     <td>{{medicines[i].name}}</td>
+                    <td>{{medicines[i].pharmgroup}}</td>
+                    <td>{{medicines[i].action}}</td>
                     <td>{{medicines[i].price}}₽</td>
                     <td>{{in_stocks[i].in_stock}}</td>
                     <td>{{boughts[i].bought}}</td>
