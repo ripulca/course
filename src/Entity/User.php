@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -20,6 +21,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    /**
+     * @Assert\Email
+     */
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private $email;
 
@@ -29,18 +33,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     */
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     */
     #[ORM\Column(type: 'string', length: 255)]
     private $surname;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $patronymic;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     */
     #[ORM\Column(type: 'string', length: 255)]
     private $city;
 
+    /**
+     * @Assert\Regex("/^^[+]7[0-9]{10}$$/")
+     */
     #[ORM\Column(type: 'string', length: 13)]
     private $phone;
 

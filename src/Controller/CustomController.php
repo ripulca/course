@@ -124,6 +124,10 @@ class CustomController extends AbstractController
                 $entityManager->getRepository(Provides::class)->add($provide, true);
             }
         }
+        if($custom->getCompleteDate()==$custom->getPaymentDate()){
+            $custom->setPaymentDate(new \DateTime());
+        }
+        $custom->setCompleteDate(new \DateTime());
         $custom->setIsReady(true);
         $entityManager->getRepository(Custom::class)->add($custom, true);
         return $this->redirectToRoute('app_custom_index', [], Response::HTTP_SEE_OTHER);
