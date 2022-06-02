@@ -21,7 +21,7 @@
                 <th>Name</th>
                 <th>Pharmgroup</th>
                 <th>Price</th>
-                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR') or is_granted('ROLE_ADMIN')) %}
+                {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
                     <th>actions</th>
                 {% endif %}
             </tr>
@@ -38,9 +38,6 @@
                     <td>{{medicine.price}}₽</td>
                     {% if (is_granted('ROLE_CUSTOMER') or is_granted('ROLE_DOCTOR')) %}
                         <td>{{ include('medicine/_add_to_cart.html.twig') }}</td>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <td><a href="{{ path('app_medicine_edit', {'id': medicine.id}) }}" class="link-secondary">edit</a></td>
                     {% endif %}
                 </tr>
             {% else %}
@@ -71,7 +68,4 @@
         </ul>
         {% endif %}
     </div>  
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_medicine_new') }}">Create new</a>
-    {% endif %}
 {% endblock %}

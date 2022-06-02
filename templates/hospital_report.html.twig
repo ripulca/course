@@ -1,22 +1,13 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hospital index{% endblock %}
-
 {% block body %}
-    <h1>Hospital index</h1>
-    <form method="post">
-        <input type="hidden" name="makeReport" value="true">
-        <button type="submit" name="submit">Get report</button>
-    </form>
+    <h1>Больницы</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>City</th>
-                <th>Phone</th>
+                <th>Название</th>
+                <th>Город</th>
+                <th>Телефон</th>
                 <th>Email</th>
-                <th>actions</th>
             </tr>
         </thead>
         <tbody>
@@ -26,9 +17,6 @@
                 <td>{{ hospital.city }}</td>
                 <td>{{ hospital.phone }}</td>
                 <td>{{ hospital.email }}</td>
-                <td>
-                    <a href="{{ path('app_hospital_show', {'id': hospital.id}) }}">show</a>
-                </td>
             </tr>
         {% else %}
             <tr>

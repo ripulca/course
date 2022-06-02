@@ -1,0 +1,32 @@
+{% block body %}
+    <h1>Врачи</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Отчество</th>
+                <th>Город</th>
+                <th>Специализация</th>
+                <th>Должность</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range(0,count-1) %}
+            <tr>
+                <td>{{ users[i].name }}</td>
+                <td>{{ users[i].surname }}</td>
+                <td>{{ users[i].patronymic }}</td>
+                <td>{{ users[i].city }}</td>
+                <td>{{ doctors[i].specialization }}</td>
+                <td>{{ doctors[i].post }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

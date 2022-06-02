@@ -37,9 +37,6 @@ class AppFixtures extends Fixture
             if ($i==0) {
                 $customer=$user;
             }
-            // if ($i==2) {
-            //     $doctor_user=$user;
-            // }
 
             $provider = new Provider();      //providers
             $provider->setName('provider_'.$i);

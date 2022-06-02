@@ -30,8 +30,7 @@ class HospitalController extends AbstractController
         $user=$entityManager->getRepository(User::class)->findOneBy(['email'=>$email]);
         
         if(isset($_POST['makeReport'])){
-            $html =$this->renderView('hospital/index.html.twig', [
-                'user'=>$user,
+            $html =$this->renderView('hospital_report.html.twig', [
                 'hospitals' => $hospitalRepository->findAll(),
             ]);
             $knpSnappyPdf->setOption('encoding', 'utf-8');

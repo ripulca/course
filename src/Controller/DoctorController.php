@@ -30,8 +30,11 @@ class DoctorController extends AbstractController
         $user=$entityManager->getRepository(User::class)->findOneBy(['email'=>$email]);
         
         if(isset($_POST['makeReport'])){
-            $html =$this->renderView('doctor/index.html.twig', [
-                'user'=>$user,
+            $users=$entityManager->getRepository(User::class)->findByRole('ROLE_DOCTOR');
+            $count=count( $users);
+            $html =$this->renderView('doctor_report.html.twig', [
+                'count' =>$count,
+                'users'=>$users,
                 'doctors' => $doctorRepository->findAll(),
             ]);
             $knpSnappyPdf->setOption('encoding', 'utf-8');
