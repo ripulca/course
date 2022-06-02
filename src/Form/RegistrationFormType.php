@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -20,23 +21,35 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('surname')
-            ->add('patronymic')
-            ->add('email')
+            ->add('name', TextType::class, array(
+                'attr'=>['class'=>'form-control']
+            ))
+            ->add('surname', TextType::class, array(
+                'attr'=>['class'=>'form-control']
+            ))
+            ->add('patronymic', TextType::class, array(
+                'attr'=>['class'=>'form-control']
+            ))
+            ->add('email', TextType::class, array(
+                'attr'=>['class'=>'form-control']
+            ))
             ->add('phone', TelType::class, [
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a phone number',
                     ]),
                 ],
+                'attr'=>['class'=>'form-control']
             ] )
-            ->add('city')
+            ->add('city', TextType::class, array(
+                'attr'=>['class'=>'form-control']
+            ))
             ->add('roles', ChoiceType::class, [
                 'choices' => [
                     'Покупатель'=>'ROLE_CUSTOMER',
                     'Курьер' => 'ROLE_COURIER',
                 ],
+                'attr'=>['class'=>'form-control']
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
@@ -50,7 +63,7 @@ class RegistrationFormType extends AbstractType
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => ['autocomplete' => 'new-password', 'class'=>'form-control'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',
